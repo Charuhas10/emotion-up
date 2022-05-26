@@ -3,12 +3,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "com.Engage.EmotionUp"
         minSdkVersion 21
-        targetSdkVersion 32
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
