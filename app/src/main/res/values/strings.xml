@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">EmotionUP</string>
+    <string name="object_detection_button_text">Start emotion detection!</string>
+</resources>
