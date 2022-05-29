@@ -18,7 +18,7 @@ To deploy this project:
 Method 1:
 
 ```
-  Step 1. In the Git repository, click on v1.0: initial commit, under  the Releases tab
+  Step 1. In the Git repository, click on v1.1: initial commit, under  the Releases tab
   Step 2. Click on app-release.apk to download the apk file
   Step 3. Install the apk file in your Android device and run.
 ```
