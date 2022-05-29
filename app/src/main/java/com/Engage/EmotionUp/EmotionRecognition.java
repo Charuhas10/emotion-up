@@ -1,5 +1,7 @@
 package com.Engage.EmotionUp;
 
+//importing different classes and files that are needed
+
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
@@ -36,22 +38,21 @@ import java.nio.channels.FileChannel;
 import java.util.Locale;
 
 public class EmotionRecognition {
-    String emotion;
-    private final Interpreter interpreter;
+    private final Interpreter interpreter;      //Defined an interpreter (encapsulates a pre trained TensorFlow lite model)
     private final int Input_Size;      //Defined Input size
+    private final TextToSpeech textToSpeech;        //Defined Texttospeech for conversion of text to audio
+    String emotion;
     private int height = 0;     //Defined height of the original frame
     private int width = 0;      //Defined width of the original frame
     private GpuDelegate gpuDelegate = null;   //used to implement gpu in interpreter
     private CascadeClassifier cascadeClassifier;    //Defined cascade classifier for face detection
-    private final TextToSpeech textToSpeech;
 
     EmotionRecognition(TextView text_change, Button speech_button, AssetManager assetManager, Context context, String path, int inputSize) throws IOException {
         Input_Size = inputSize;
         Interpreter.Options options = new Interpreter.Options();
         gpuDelegate = new GpuDelegate();
-
         options.addDelegate(gpuDelegate);
-        options.setNumThreads(8);
+        options.setNumThreads(8);       //setting the number of threads that will be used from your device
 
         interpreter = new Interpreter(loadModelFile(assetManager, path), options);      //Will load model weight to interpreter
 
@@ -62,7 +63,7 @@ public class EmotionRecognition {
                     textToSpeech.setLanguage(Locale.ENGLISH);
                 }
             }
-        });
+        });     //setting the audio voice type for the TTS
 
         speech_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,9 +71,9 @@ public class EmotionRecognition {
                 text_change.setText(emotion);
                 textToSpeech.speak(emotion, TextToSpeech.QUEUE_FLUSH, null);
             }
-        });
+        });     //setting up the button which when pressed will speak out the text in the text_change (textview)
 
-        Log.d("Emotion_Recognition", "Model is loaded");
+        Log.d("Emotion_Recognition", "Model is loaded");        //Debug message, to check if the model is loaded or not
 
         try {
             InputStream inputStream = context.getResources().openRawResource(R.raw.haarcascade_frontalface_alt);
@@ -130,7 +131,6 @@ public class EmotionRecognition {
             bitmap = Bitmap.createBitmap(croppedRGBA.cols(), croppedRGBA.rows(), Bitmap.Config.ARGB_8888);
             Utils.matToBitmap(croppedRGBA, bitmap);
             Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 48, 48, false);       //resizing the bitmap to (48,48)
-
             ByteBuffer byteBuffer = convertBitmapToByteBuffer(scaled);
 
             float[][] emotions = new float[1][1];
@@ -146,10 +146,9 @@ public class EmotionRecognition {
             Imgproc.putText(mat_image, emotion + "(" + emotionVal + ")",
                     new Point((int) arrayFace[i].tl().x + 10, (int) arrayFace[i].tl().y + 20), 1, 1.5, new Scalar(255, 255, 255, 150), 2);
         }
-
         Core.flip(mat_image.t(), mat_image, 0); //rotating mat_image by -90 degrees after prediction
         return mat_image;
-    }
+    }       //code to create a frame around the face and checking the emotion
 
     private String get_emotion_text(float emotionVal) {
         String val = "";
@@ -160,18 +159,17 @@ public class EmotionRecognition {
             val = "Fear";
         } else if (emotionVal >= 1.5 & emotionVal < 2.7) {
             val = "Angry";
-        } else if (emotionVal >= 2.7 & emotionVal < 3.5) {
+        } else if (emotionVal >= 2.7 & emotionVal < 3.2) {
             val = "Neutral";
-        } else if (emotionVal >= 3.5 & emotionVal < 4.7) {
+        } else if (emotionVal >= 3.2 & emotionVal < 4.5) {
             val = "Sad";
-        } else if (emotionVal >= 4.7 & emotionVal < 5.5) {
+        } else if (emotionVal >= 4.5 & emotionVal < 5.5) {
             val = "Disgusted";
         } else {
             val = "Happy!";
         }
         return val;
-    }
-
+    }       //checking the range of the image detected and matches it with our model and returns the emotion accordingly
 
     private ByteBuffer convertBitmapToByteBuffer(Bitmap scaled) {
         ByteBuffer byteBuffer;

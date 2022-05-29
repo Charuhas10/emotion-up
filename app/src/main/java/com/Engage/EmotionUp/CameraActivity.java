@@ -1,5 +1,7 @@
 package com.Engage.EmotionUp;
 
+//importing different classes and files that are needed
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
@@ -23,6 +25,7 @@ import org.opencv.core.Mat;
 
 import java.io.IOException;
 
+//to inherit CameraBridgeView from OpenCV library
 public class CameraActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2 {
     private static final String TAG = "MainActivity";
 
@@ -46,13 +49,13 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
             }
         }
     };
-    //private FaceRec faceRec;
+
     private EmotionRecognition emotionRecognition;
-    private TextView text_change;
-    private Button speech_button;
+    private TextView text_change;       //defining the TextView widget
+    private Button speech_button;       //defining the button used for TTS
 
     public CameraActivity() {
-        Log.i(TAG, "Instantiated new " + this.getClass());
+        Log.i(TAG, "Instantiated new " + this.getClass());      // to post this useful info in the log
     }
 
     @Override
@@ -74,18 +77,17 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
 
-        text_change = findViewById(R.id.text_change);
-        speech_button = findViewById(R.id.speech_button);
+        text_change = findViewById(R.id.text_change);       //maps the TextView widget from Our xml code directly to Java
+        speech_button = findViewById(R.id.speech_button);   ////maps the Button widget from Our xml code directly to Java
 
 
-        //Will load the trained model and the cascade classifier and will work only once when cameraactivity is started
+        //Will load the trained model and the cascade classifier and will work only once when CameraActivity is started
         try {
             int inputSize = 48;
             emotionRecognition = new EmotionRecognition(text_change, speech_button, getAssets(), CameraActivity.this, "model.tflite", inputSize);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -115,7 +117,6 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         if (mOpenCvCameraView != null) {
             mOpenCvCameraView.disableView();
         }
-
     }
 
     public void onCameraViewStarted(int width, int height) {
@@ -133,6 +134,5 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         mRgba = emotionRecognition.imageRecognize(mRgba);
         //mRgba=faceRec.recognizeImage(mRgba);
         return mRgba;
-
     }
 }
