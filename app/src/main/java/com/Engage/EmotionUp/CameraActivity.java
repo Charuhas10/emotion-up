@@ -1,8 +1,5 @@
 package com.Engage.EmotionUp;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
@@ -14,6 +11,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
@@ -23,29 +23,22 @@ import org.opencv.core.Mat;
 
 import java.io.IOException;
 
-public class CameraActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2{
-    private static final String TAG="MainActivity";
+public class CameraActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2 {
+    private static final String TAG = "MainActivity";
 
     private Mat mRgba;
     private Mat mGray;
     private CameraBridgeViewBase mOpenCvCameraView;
-    private EmotionRecognition emotionRecognition;
-    //private FaceRec faceRec;
-
-    private TextView text_change;
-    private Button speech_button;
-
-    private BaseLoaderCallback mLoaderCallback =new BaseLoaderCallback(this) {
+    private final BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
-            switch (status){
+            switch (status) {
                 case LoaderCallbackInterface
-                        .SUCCESS:{
-                    Log.i(TAG,"OpenCv Is loaded");
+                        .SUCCESS: {
+                    Log.i(TAG, "OpenCv Is loaded");
                     mOpenCvCameraView.enableView();
                 }
-                default:
-                {
+                default: {
                     super.onManagerConnected(status);
 
                 }
@@ -53,9 +46,13 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
             }
         }
     };
+    //private FaceRec faceRec;
+    private EmotionRecognition emotionRecognition;
+    private TextView text_change;
+    private Button speech_button;
 
-    public CameraActivity(){
-        Log.i(TAG,"Instantiated new "+this.getClass());
+    public CameraActivity() {
+        Log.i(TAG, "Instantiated new " + this.getClass());
     }
 
     @Override
@@ -64,36 +61,28 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        int MY_PERMISSIONS_REQUEST_CAMERA=0;
+        int MY_PERMISSIONS_REQUEST_CAMERA = 0;
         // if camera permission is not given it will ask for it on device
         if (ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_DENIED){
-            ActivityCompat.requestPermissions(CameraActivity.this, new String[] {Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
+                == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(CameraActivity.this, new String[]{Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
         }
 
         setContentView(R.layout.activity_camera);
 
-        mOpenCvCameraView=(CameraBridgeViewBase) findViewById(R.id.frame_Surface);
+        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.frame_Surface);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
 
-        text_change=findViewById(R.id.text_change);
-        speech_button=findViewById(R.id.speech_button);
+        text_change = findViewById(R.id.text_change);
+        speech_button = findViewById(R.id.speech_button);
 
-       /* try{
-            int inputSize = 48;
-            faceRec=new FaceRec(getAssets(), CameraActivity.this, "model2.tflit", inputSize);
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }*/
 
         //Will load the trained model and the cascade classifier and will work only once when cameraactivity is started
-        try{
-            int inputSize=48;
-            emotionRecognition = new EmotionRecognition(text_change,speech_button, getAssets(), CameraActivity.this,"model.tflite", inputSize);
-        }
-        catch(IOException e){
+        try {
+            int inputSize = 48;
+            emotionRecognition = new EmotionRecognition(text_change, speech_button, getAssets(), CameraActivity.this, "model.tflite", inputSize);
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -102,45 +91,47 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     @Override
     protected void onResume() {
         super.onResume();
-        if (OpenCVLoader.initDebug()){
+        if (OpenCVLoader.initDebug()) {
             //if load success
-            Log.d(TAG,"Opencv initialization is done");
+            Log.d(TAG, "Opencv initialization is done");
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-        }
-        else{
+        } else {
             //if not loaded
-            Log.d(TAG,"Opencv is not loaded. try again");
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_4_0,this,mLoaderCallback);
+            Log.d(TAG, "Opencv is not loaded. try again");
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_4_0, this, mLoaderCallback);
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (mOpenCvCameraView !=null){
+        if (mOpenCvCameraView != null) {
             mOpenCvCameraView.disableView();
         }
     }
 
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
-        if(mOpenCvCameraView !=null){
+        if (mOpenCvCameraView != null) {
             mOpenCvCameraView.disableView();
         }
 
     }
 
-    public void onCameraViewStarted(int width ,int height){
-        mRgba=new Mat(height,width, CvType.CV_8UC4);
-        mGray =new Mat(height,width,CvType.CV_8UC1);
+    public void onCameraViewStarted(int width, int height) {
+        mRgba = new Mat(height, width, CvType.CV_8UC4);
+        mGray = new Mat(height, width, CvType.CV_8UC1);
     }
-    public void onCameraViewStopped(){
+
+    public void onCameraViewStopped() {
         mRgba.release();
     }
-    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame){
-        mRgba=inputFrame.rgba();
-        mGray=inputFrame.gray();
-        mRgba=emotionRecognition.imageRecognize(mRgba);
+
+    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+        mRgba = inputFrame.rgba();
+        mGray = inputFrame.gray();
+        mRgba = emotionRecognition.imageRecognize(mRgba);
+        //mRgba=faceRec.recognizeImage(mRgba);
         return mRgba;
 
     }
