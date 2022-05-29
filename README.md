@@ -17,7 +17,7 @@ To deploy this project:
 
 Method 1:
 
-```bash
+```
   Step 1. In the Git repository, click on v1.0: initial commit, under  the Releases tab
   Step 2. Click on app-release.apk to download the apk file
   Step 3. Install the apk file in your Android device and run.
@@ -25,7 +25,7 @@ Method 1:
 
 Method 2:
 
-```bash
+```
 Step 1: Download the code zip file and extract it on your local machine
 Step 2: Open the project in Android Studio.
 Step 3: The wil not run on the Virtual Emulator of Android Studio due to GPU access errors
