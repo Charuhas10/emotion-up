@@ -5,7 +5,8 @@ It is a mobile application developed in Java, which is used to detect emotions o
 
 ## Features
 
-- Face Detection
+- Real Time Face Detection
+- Works at live humans
 - Emotions ranging from of happy, sad, angry, disgusted, fear, surprised and neutral
 - Text to speech of the detected emotion.
 
